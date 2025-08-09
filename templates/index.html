@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Used Car Price Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <h1 style="text-align:center;">USED CAR PRICE PREDICTION</h1>
+    <img src="{{ url_for('static', filename='hero.jpg') }}" style="width:100%; border-radius:10px;">
+
+    <p style="text-align:center;">
+        Our goal is to make car buying smarter by predicting the best price for your next used car.
+    </p>
+    <hr>
+
+    <form method="POST">
+        <label>Select Car Brand:</label>
+        <select name="brand" onchange="updateModels(this.value)">
+            {% for b in brands %}
+            <option value="{{ b }}">{{ b }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>Select Car Model:</label>
+        <select name="model" id="model-select"></select><br><br>
+
+        <label>Fuel Type:</label>
+        <select name="fuel">
+            {% for f in fuels %}
+            <option value="{{ f }}">{{ f }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>Seller Type:</label>
+        <select name="seller_type">
+            {% for s in sellers %}
+            <option value="{{ s }}">{{ s }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>Transmission:</label>
+        <select name="transmission">
+            {% for t in transmissions %}
+            <option value="{{ t }}">{{ t }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label>Ownership:</label>
+        <select name="owner">
+            {% for o in owners %}
+            <option value="{{ o }}">{{ o }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <!-- Sliders -->
+        <label>Year: <span id="year-value">2015</span></label><br>
+        <input type="range" name="year" min="1995" max="2025" value="2015" oninput="document.getElementById('year-value').innerText = this.value">
+        <br><br>
+
+        <label>Kilometers Driven: <span id="km-value">30000</span></label><br>
+        <input type="range" name="km_driven" min="1000" max="200000" step="500" value="30000" oninput="document.getElementById('km-value').innerText = this.value">
+        <br><br>
+
+        <label>Mileage (km/l): <span id="mileage-value">18</span></label><br>
+        <input type="range" name="mileage" min="10" max="40" step="0.1" value="18" oninput="document.getElementById('mileage-value').innerText = this.value">
+        <br><br>
+
+        <label>Engine (CC): <span id="engine-value">1197</span></label><br>
+        <input type="range" name="engine" min="700" max="5000" value="1197" oninput="document.getElementById('engine-value').innerText = this.value">
+        <br><br>
+
+        <label>Max Power (BHP): <span id="power-value">85</span></label><br>
+        <input type="range" name="max_power" min="20" max="250" value="85" oninput="document.getElementById('power-value').innerText = this.value">
+        <br><br>
+
+        <label>Seats: <span id="seats-value">5</span></label><br>
+        <input type="range" name="seats" min="2" max="10" value="5" oninput="document.getElementById('seats-value').innerText = this.value">
+        <br><br>
+
+        <button type="submit" style="display: block; margin: 20px auto; padding: 10px 20px; background-color: darkblue; color: white; border: none; border-radius: 5px; font-weight: bold;">
+    Predict
+</button>
+
+    </form>
+
+    {% if prediction %}
+    <a href="{{ image_link }}" target="_blank" 
+   style="display: block; text-align: center; text-decoration: none; color: #d9ce59; margin-top: 20px; font-size: 1.5rem;">
+   VIEW CAR IMAGE
+</a>
+
+    <h2 style="color:cyan;text-align:center;font-size: 2.5rem; argin-top: 20px;">Estimated Price: ₹{{ prediction }}</h2>
+    {% endif %}
+    <br><br>
+</div>
+
+<script>
+    const brandModels = {{ brand_models | tojson }};
+    function updateModels(brand) {
+        const modelSelect = document.getElementById("model-select");
+        modelSelect.innerHTML = "";
+        brandModels[brand].forEach(m => {
+            let opt = document.createElement("option");
+            opt.value = m;
+            opt.innerHTML = m;
+            modelSelect.appendChild(opt);
+        });
+    }
+    window.onload = () => {
+        const firstBrand = document.querySelector("select[name='brand']").value;
+        updateModels(firstBrand);
+    }
+</script>
+
+</body>
+</html>
